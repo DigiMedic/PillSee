@@ -1,6 +1,4 @@
-# PillSee
-
-![PillSee Cover](https://i.ibb.co/z4SpKPp/Pill-See-cover.png)
+# PillSee - project brief
 
 PillSee je konverzační platforma zaměřená na české uživatele, která využívá rámec Langchain pro poskytování přesných a relevantních informací o léčivých přípravcích. Aplikace umožňuje uživatelům získávat informace o léčivech pomocí textu nebo fotografií obalů a integruje nezávislou databázi léčiv dostupných v České republice. Hlavním cílem je shrnout klíčové informace z příbalových letáků a zdůraznit potenciální nežádoucí účinky. Monetizační strategie zahrnuje affiliate marketing, kde aplikace nabízí odkazy na eshopy pro objednání léčivých přípravků, čímž generuje příjmy pro další vývoj.
 
