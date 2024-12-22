@@ -52,33 +52,6 @@ Prosím, berte na vědomí, že náš AI modul je zde, aby poskytl přesné a u�
     Vyhledej informace o léku {lék} a poskytni údaje o jeho účincích, dávkování, nežádoucích účincích a {rizika}. Upozorni uživatele, aby vždy konzultoval jakékoliv otázky týkající se užití léků se svým lékařem nebo lékárníkem. Neprováděj žádné vlastní interpretace informací o léku, pouze poskytni přesné údaje ze zdroje.
     ```
 
-## Monetizační strategie: Affiliate marketing
-
-**Cíl:** Získat finance pro další vývoj projektu bez zatížení uživatele.
-
-### Implementace:
-
-1. **Detekce záměru uživatele**:
-   - Když uživatel zahájí konverzaci o léčivém přípravku, aplikace analyzuje sentiment konverzace.
-   - Pokud aplikace identifikuje zájem uživatele o léčivý přípravek, například dotazy na jeho účinky, dávkování nebo dostupnost.
-
-2. **Nabídka pomoci s objednáním**:
-   - Aplikace ve vhodný okamžik během konverzace položí uživateli otázku, zda si přeje vyhledat dostupné prodejce a pomoci s objednáním léčivého přípravku.
-   - Pokud uživatel souhlasí, aplikace zašle požadavek na AI agenta s touto funkcí.
-
-3. **Získání relevantních odkazů**:
-   - AI agent provede vyhledávání a vrátí odpověď s relevantními odkazy na nákup léčivého přípravku.
-   - Tyto odkazy budou obsahovat affiliate odkazy, které zabezpečí, že za každou transakci uskutečněnou přes tyto odkazy obdržíme provizi.
-
-4. **Odpověď uživateli**:
-   - Aplikace vrátí uživateli odkazy na eshopy, kde může léčivý přípravek objednat.
-   - Tyto odkazy budou předloženy přívětivým způsobem jako součást konverzace.
-
-### Výhody:
-
-- **Finanční podpora pro další vývoj**: Zajištění prostředků na další rozvoj projektu bez přímých nákladů pro uživatele.
-- **Relevance a užitečnost**: Poskytnutí užitečných informací a přímé možnosti objednání léčivého přípravku uživateli v rámci jedné aplikace.
-- **Zvýšení hodnoty pro uživatele**: Uživatelé ocení integrovanou funkci, která jim ušetří čas a poskytne pohodlné řešení.
 
 ## Databaze léčiv
 
