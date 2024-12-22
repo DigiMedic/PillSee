@@ -9,90 +9,69 @@ PillSee je inovativní AI-powered chatovací platforma zaměřená na poskytová
 - **AI Chatbot**: Inteligentní konverzační rozhraní pro dotazy o lécích
 - **Integrace SÚKL**: Přímé napojení na databázi Státního ústavu pro kontrolu léčiv
 - **Zpracování obrazu**: Možnost identifikace léků pomocí fotografií
-- **Personalizované odpovědi**: Využití historie konverzací pro kontextuální odpovědi
-- **Realtime aktualizace**: Okamžité aktualizace chatovacího rozhraní
 
 ## 🛠️ Technologický stack
 
-- **Frontend**: Next.js
+- **Frontend**: Next.js a komponenty Shadcn/UI
 - **Backend**: FastAPI
-- **AI Framework**: LangChain
-- **Databáze**: PocketBase
-- **Externí API**: SÚKL API
+- **AI Framework**: Vercel AI SDK
+- **Databáze**: supabase s vlasnim hostingem
 - **Kontejnerizace**: Docker
-- **CI/CD**: GitHub Actions
 
-## 📋 Prerekvizity
+---
+# PillSee - project brief
 
-- Node.js (v14 nebo vyšší)
-- Python (v3.8 nebo vyšší)
-- Docker a Docker Compose
-- Git
+PillSee je konverzační platforma zaměřená na české uživatele, která využívá rámec Langchain pro poskytování přesných a relevantních informací o léčivých přípravcích. Aplikace umožňuje uživatelům získávat informace o léčivech pomocí textu nebo fotografií obalů a integruje nezávislou databázi léčiv dostupných v České republice. Hlavním cílem je shrnout klíčové informace z příbalových letáků a zdůraznit potenciální nežádoucí účinky. Monetizační strategie zahrnuje affiliate marketing, kde aplikace nabízí odkazy na eshopy pro objednání léčivých přípravků, čímž generuje příjmy pro další vývoj.
 
-## 🔧 Instalace a spuštění
+---
 
-1. Klonování repozitáře:
-   ```bash
-   git clone https://github.com/DigiMedic/PillSee.git
-   cd PillSee
-   ```
+💡 **Cílem**: Vyvinout konverzační platformu zaměřenou na české uživatele, která využívá rámec Langchain pro poskytování přesných a relevantních informací o léčivých přípravcích. Aplikace bude sloužit jako rozhraní pro dotazy na léčiva, umožní uživatelům získávat informace o přípravcích pomocí textu nebo fotografií obalů a bude integrovat nezávislou databázi léčiv dostupných v České republice. Hlavním úkolem agenta bude shrnutí klíčových informací z příbalových letáků, včetně zdůraznění potenciálních nežádoucích účinků.
 
-2. Nastavení prostředí:
-   ```bash
-   cp .env.example .env
-   # Upravte .env soubor podle vašich potřeb
-   ```
+---
 
-3. Spuštění pomocí Docker Compose:
-   ```bash
-   docker-compose up -d
-   ```
+## Flow
 
-4. Přístup k aplikaci:
-   - Frontend: `http://localhost:3000`
-   - Backend API: `http://localhost:8000`
-   - PocketBase Admin: `http://localhost:8090/_/`
+1. **Uživatelský Dotaz**:  
+   Uživatel zahájí konverzaci zasláním dotazu nebo fotografie léčivého přípravku. Tento dotaz může být zadán formou textu nebo jako obrázek skrze uživatelské rozhraní aplikace.
 
-## 📁 Struktura projektu
+2. **Zpracování Dotazu**:  
+   Aplikace přijme uživatelský dotaz a provede předběžnou analýzu k určení, zda je dotaz ve formě textu nebo obrázku. Pro fotografie se použije modul pro optické rozpoznání znaků (OCR) nebo obrazové rozpoznávací technologie k identifikaci produktu.
 
-```
-pillsee/
-├── frontend/          # Next.js aplikace
-├── backend/           # FastAPI server
-├── ai/                # LangChain a AI komponenty
-├── pocketbase/        # PocketBase konfigurace a data
-├── docs/              # Projektová dokumentace
-├── scripts/           # Pomocné skripty
-├── .github/           # GitHub Actions konfigurace
-├── docker-compose.yml # Docker Compose konfigurace
-└── README.md          # Tento soubor
-```
+3. **Vyhledávání v Databázi**:  
+   Po identifikaci léčivého přípravku se vyhledají relevantní informace v nezávislé databázi léčiv. Tento krok zahrnuje přístup k databázi pomocí API nebo jiného rozhraní pro získání informací o přípravku, včetně sumarizace důležitých údajů z příbalového letáku.
 
-## 🧪 Testování
+4. **Nezávislé a Relevantní Informace**:  
+   Systém zpracuje informace, aby zabezpečil, že poskytnuté údaje o léčivém přípravku jsou nezávislé na ceně a jsou relevantní pro uživatele. Informace budou zahrnovat účinky, dávkování, nežádoucí účinky a jakékoli rizikové informace.
 
-Spuštění testů pro backend:
-```bash
-cd backend
-pytest
-```
+5. **Poskytnutí Odpovědi Uživateli**:  
+   Aplikace pak vrací shrnutí informací uživateli, včetně zvýrazněných upozornění, pokud jsou k dispozici, a to vše v přívětivém formátu konverzačního chatu.
 
-Spuštění testů pro frontend:
-```bash
-cd frontend
-npm test
-```
+## Poskytování informací o léčivém přípravku
 
-## 📄 Licence
+Po přijetí a zpracování uživatelského dotazu aplikace provede vyhledávání v databázi léčiv. Databáze obsahuje podrobné informace o různých léčivých přípravcích dostupných v České republice. Na základě uživatelova dotazu aplikace identifikuje relevantní léčivý přípravek a získá z databáze následující informace:
 
-Tento projekt je licencován pod MIT licencí. Viz soubor [LICENSE](LICENSE) pro více informací.
+1. **Účinky léčivého přípravku**:  
+   Co lék dělá, jak působí na tělo a jak pomáhá léčit nebo řešit zdravotní problémy.
 
-## 📊 Integrace s SÚKL API
+2. **Dávkování**:  
+   Doporučené množství a frekvence užití léčivého přípravku.
 
-PillSee využívá SÚKL API pro získávání aktuálních informací o léčivech. Hlavní endpointy:
+3. **Potenciální nežádoucí účinky**:  
+   Možné vedlejší účinky, které může lék způsobit.
 
-- `/api/pharmaceuticals`: Seznam všech léčiv
-- `/api/pharmaceuticals/{id}`: Detaily konkrétního léčiva
-- `/api/search`: Vyhledávání léčiv
+4. **Rizikové informace**:  
+   Jakákoliv varování nebo opatření spojená s užíváním léku.
 
-Pro více informací o API viz [oficiální dokumentaci SÚKL](https://prehledy.sukl.cz/prehled_leciv.html).
+Tyto informace jsou pak převedeny do srozumitelné a přehledné formy, která je předložena uživateli. Cílem je poskytnout uživateli přesné a relevantní informace, které mu pomohou lépe porozumět léčivému přípravku a jeho užití.
+
+💡 **Důležité oznámení administrátora**:  
+Prosím, berte na vědomí, že náš AI modul je zde, aby poskytl přesné a užitečné informace. Avšak, jeho schopnosti jsou omezené a neměl by nahradit profesionální lékařskou radu.
+
+---
+
+## Databaze léčiv
+
+- [Databáze léčivých přípravků DLP | Otevřená data](https://opendata.sukl.cz/?q=katalog/databaze-lecivych-pripravku-dlp)
+- [Přehled léčiv](https://prehledy.sukl.cz/prehled_leciv.html#/?typ=0&filtr=%22%22&pocet=10&stranka=1&sort=%5B%22nazev%22%5D&smer=%22asc%22&leciveLatky=%5B%5B%5D%5D&leciveLatkyOperace=%22OR%22&leciveLatkyOperaceZavorek=%22ANY%22&atc=%22%22&cestaPodani=%22%22&drzitelRegistrace=%5B%5D&stavRegistrace=%22%22&zpusobVydeje=%5B%5D&uhrada=%5B%5D&dovoz=%22%22&jeDodavka=false&stavZruseni=%22N%22&ochrannyPrvek=%22X%22&dostupnost=%5B%5D&omezenaDostupnost=false&lecivaLatkaSelected=%5B%5B%5D%5D&lecivaLatkaValue=%5B%22%22%5D&lecivaLatkaCiselnik=%5B%5B%5D%5D&typVydeje=%223%22)
+
 
