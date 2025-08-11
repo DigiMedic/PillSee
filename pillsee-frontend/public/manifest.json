@@ -1,0 +1,76 @@
+{
+  "name": "PillSee - Informace o lécích",
+  "short_name": "PillSee",
+  "description": "Anonymní AI asistent pro informace o českých lécích",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "scope": "/",
+  "categories": ["medical", "health", "utilities"],
+  "lang": "cs-CZ",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-apple-touch.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "PillSee mobilní rozhraní"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Vyfotit lék",
+      "short_name": "Foto",
+      "description": "Rychlé rozpoznání léku z obrázku",
+      "url": "/?action=camera",
+      "icons": [
+        {
+          "src": "/camera-icon.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Textový dotaz",
+      "short_name": "Dotaz", 
+      "description": "Zeptat se na lék",
+      "url": "/?action=query",
+      "icons": [
+        {
+          "src": "/search-icon.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "features": [
+    "camera",
+    "offline-support", 
+    "anonymous-usage"
+  ]
+}

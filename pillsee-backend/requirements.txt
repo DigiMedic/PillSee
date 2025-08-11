@@ -1,0 +1,35 @@
+# PillSee Backend Dependencies
+
+# Web framework
+fastapi==0.116.1
+uvicorn==0.35.0
+
+# Rate limiting
+slowapi==0.1.9
+
+# AI & ML
+openai==1.97.1
+langchain==0.3.27
+langchain-community==0.3.27
+langchain-openai==0.3.29
+langgraph==0.6.4
+
+# Image processing
+Pillow==11.0.0
+
+# Database & Vector Store  
+supabase==2.18.0
+pandas==2.3.1
+
+# Configuration & Settings
+pydantic-settings==2.10.1
+python-dotenv==1.1.1
+
+# Utilities
+pathspec==0.12.1
+typing-extensions==4.14.1
+
+# Development & Testing
+pytest==8.4.1
+pytest-env==1.1.5
+httpx==0.28.1
