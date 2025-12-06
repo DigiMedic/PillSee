@@ -1,0 +1,338 @@
+name: Documentation Generation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'pillsee-backend/app/**'
+      - 'pillsee-frontend/**'
+      - 'docs/**'
+      - '.github/workflows/docs-generation.yml'
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  generate-api-docs:
+    name: Generate API Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd pillsee-backend
+          pip install -r requirements.txt
+          pip install pyyaml
+
+      - name: Validate OpenAPI spec
+        run: |
+          cd docs/api
+          python -c "import yaml; yaml.safe_load(open('openapi.yaml'))"
+
+      - name: Generate Redoc HTML
+        run: |
+          npm install -g @redocly/cli
+          redocly build-docs docs/api/openapi.yaml \
+            -o docs/api/index.html
+
+      - name: Generate Swagger UI
+        run: |
+          mkdir -p docs/api/swagger
+          cat > docs/api/swagger/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="cs">
+          <head>
+              <meta charset="UTF-8">
+              <title>PillSee API Documentation</title>
+              <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+          </head>
+          <body>
+              <div id="swagger-ui"></div>
+              <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+              <script>
+                  window.onload = function() {
+                      SwaggerUIBundle({
+                          url: "../openapi.yaml",
+                          dom_id: '#swagger-ui',
+                          deepLinking: true,
+                          presets: [SwaggerUIBundle.presets.apis],
+                          layout: "StandaloneLayout"
+                      });
+                  }
+              </script>
+          </body>
+          </html>
+          EOF
+
+      - name: Upload API docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-docs
+          path: docs/api/
+
+  generate-code-docs:
+    name: Generate Code Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Sphinx
+        run: |
+          pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints
+
+      - name: Generate Sphinx docs
+        run: |
+          cd pillsee-backend
+
+          # Create Sphinx config if not exists
+          if [ ! -f docs/conf.py ]; then
+            mkdir -p docs
+            sphinx-quickstart docs \
+              --sep \
+              --project="PillSee Backend" \
+              --author="PillSee Team" \
+              --release="1.0.0" \
+              --language="cs" \
+              --no-makefile \
+              --no-batchfile
+          fi
+
+          # Build HTML docs
+          sphinx-build -b html docs/source docs/build/html
+
+      - name: Upload code docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-docs
+          path: pillsee-backend/docs/build/html
+
+  check-doc-coverage:
+    name: Check Documentation Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install interrogate
+
+      - name: Check docstring coverage
+        run: |
+          cd pillsee-backend
+
+          # Run interrogate to check docstring coverage
+          interrogate app/ \
+            --ignore-init-method \
+            --ignore-init-module \
+            --ignore-magic \
+            --fail-under=70 \
+            --verbose
+
+      - name: Generate coverage badge
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Generate coverage report
+          cd pillsee-backend
+          interrogate app/ \
+            --generate-badge docs/badges/ \
+            --badge-format svg
+
+      - name: Upload badge artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: doc-coverage-badge
+          path: pillsee-backend/docs/badges/
+
+  validate-markdown:
+    name: Validate Markdown Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli
+
+      - name: Lint markdown files
+        run: |
+          markdownlint 'docs/**/*.md' \
+            --config .markdownlint.json \
+            --ignore node_modules \
+            --ignore venv
+
+  check-links:
+    name: Check Documentation Links
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install markdown-link-check
+        run: npm install -g markdown-link-check
+
+      - name: Check links in markdown files
+        run: |
+          find docs -name "*.md" -exec \
+            markdown-link-check {} \;
+
+  deploy-docs:
+    name: Deploy Documentation to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [generate-api-docs, generate-code-docs]
+    if: github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download API docs
+        uses: actions/download-artifact@v4
+        with:
+          name: api-docs
+          path: public/api
+
+      - name: Download code docs
+        uses: actions/download-artifact@v4
+        with:
+          name: code-docs
+          path: public/backend
+
+      - name: Copy markdown docs
+        run: |
+          mkdir -p public/guides
+          cp docs/USER_GUIDE.md public/guides/
+          cp docs/DEVELOPER_GUIDE.md public/guides/
+          cp docs/architecture/system-architecture.md public/architecture/
+
+      - name: Create index page
+        run: |
+          cat > public/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="cs">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>PillSee Documentation</title>
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                      max-width: 800px;
+                      margin: 0 auto;
+                      padding: 40px 20px;
+                      line-height: 1.6;
+                  }
+                  h1 { color: #2563eb; }
+                  .card {
+                      border: 1px solid #e5e7eb;
+                      border-radius: 8px;
+                      padding: 20px;
+                      margin: 20px 0;
+                  }
+                  .card h2 { margin-top: 0; }
+                  a { color: #2563eb; text-decoration: none; }
+                  a:hover { text-decoration: underline; }
+              </style>
+          </head>
+          <body>
+              <h1>🏥 PillSee Documentation</h1>
+              <p>Kompletní dokumentace pro PillSee AI asistent pro české léky</p>
+
+              <div class="card">
+                  <h2>📚 API Documentation</h2>
+                  <ul>
+                      <li><a href="api/index.html">Redoc API Docs</a></li>
+                      <li><a href="api/swagger/index.html">Swagger UI</a></li>
+                      <li><a href="api/openapi.yaml">OpenAPI Specification (YAML)</a></li>
+                  </ul>
+              </div>
+
+              <div class="card">
+                  <h2>👨‍💻 Developer Guides</h2>
+                  <ul>
+                      <li><a href="guides/DEVELOPER_GUIDE.html">Developer Guide</a></li>
+                      <li><a href="backend/index.html">Backend Code Documentation</a></li>
+                      <li><a href="architecture/system-architecture.html">System Architecture</a></li>
+                  </ul>
+              </div>
+
+              <div class="card">
+                  <h2>📖 User Guides</h2>
+                  <ul>
+                      <li><a href="guides/USER_GUIDE.html">User Guide</a></li>
+                  </ul>
+              </div>
+
+              <div class="card">
+                  <h2>🔗 Links</h2>
+                  <ul>
+                      <li><a href="https://github.com/pillsee/pillsee">GitHub Repository</a></li>
+                      <li><a href="https://pillsee.cz">PillSee Website</a></li>
+                      <li><a href="mailto:support@pillsee.cz">Support</a></li>
+                  </ul>
+              </div>
+          </body>
+          </html>
+          EOF
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  notify-completion:
+    name: Notify Documentation Update
+    runs-on: ubuntu-latest
+    needs: [deploy-docs]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Send notification
+        run: |
+          echo "📝 Documentation successfully updated and deployed!"
+          echo "View at: https://pillsee.github.io/pillsee/"

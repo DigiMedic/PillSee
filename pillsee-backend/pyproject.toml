@@ -1,0 +1,26 @@
+[project]
+name = "pillsee-backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "chardet>=5.2.0",
+    "fastapi>=0.116.1",
+    "langchain>=0.3.27",
+    "langgraph>=0.6.4",
+    "openai>=1.99.6",
+    "pandas>=2.3.1",
+    "pydantic>=2.11.7",
+    "slowapi>=0.1.9",
+    "supabase>=2.18.0",
+    "uvicorn>=0.35.0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "mypy>=1.17.1",
+    "pytest>=8.4.1",
+    "ruff>=0.12.8",
+]
